@@ -1,0 +1,13 @@
+html, body, .container-fluid {
+  height: 100%;
+  background-color: rgba(17, 17, 17);
+}
+
+html {
+  -webkit-app-region: drag;
+}
+
+textarea {
+  width: 50vw;
+  height: 250px;
+}
