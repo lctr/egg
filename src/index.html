@@ -4,7 +4,7 @@
 <head>
   <base href="./">
   <meta charset="UTF-8">
-  <title>Hello World!</title>
+  <title>E g g</title>
   <link rel="stylesheet" href="./style.css">
   <script src="./egg.js" charset="utf-8"></script>
 </head>
@@ -13,60 +13,20 @@
 
   <div>
     <div class="container">
-      <textarea id="code-editor"></textarea>
-      <div class="controls">
-        <button id="run">Run</button>
-        <button id="clear">Clear</button>
+      <div id="code-input">
+        <textarea id="code-editor"></textarea>
       </div>
 
       <div id="code-output">
+        <div id="results"></div>
         <div id="tree">
           <pre id="json"></pre>
         </div>
-        <div id="results"></div>
       </div>
     </div>
   </div>
 
-  <script>
-    let ready = false;
-    const button = document.getElementById("run");
-    const textarea = document.getElementById("code-editor");
-    const json = document.getElementById("json");
-    const results = document.getElementById("results");
-
-    const ast = (input) => JSON.stringify(parse(input), null, 2);
-
-    textarea.oninput = () => {
-      if (textarea.value.trim().length === 0) {
-        ready = false;
-        return;
-      }
-      let tree = '';
-      try {
-        tree = ast(textarea.value);
-        ready = true;
-      } catch (e) {
-        tree = '· · ·';
-      }
-      json.textContent = tree;
-    }
-
-    button.onclick = () => {
-      if (!ready) return;
-      let eggTree = '', eggResults = '';
-      try {
-        eggTree = ast(textarea.value);
-        eggResults = run(textarea.value);
-      } catch (e) {
-        eggTree = 'Error!';
-        eggResults = e;
-        alert(e);
-      }
-      tree.textContent = eggTree;
-      results.innerHTML = eggResults;
-    };
-  </script>
+  <script src="./script.js"></script>
 </body>
 
 </html>

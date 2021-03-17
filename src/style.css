@@ -1,13 +1,58 @@
-html, body, .container-fluid {
-  height: 100%;
-  background-color: rgba(17, 17, 17);
+/* :root {
+  
+} */
+
+/* .titlebar {
+  top: 0;
+  height: 30px;
+  width: 100vw;
+  position: absolute;
+  -webkit-app-region: drag;
+} */
+
+html, body {
+  color: #f2f2f2;
+  font-family: Helvetica, Arial, sans-serif;
 }
 
-html {
-  -webkit-app-region: drag;
-}
+/* body {
+  margin-top: 40px;
+} */
 
 textarea {
   width: 50vw;
   height: 250px;
+  border: none;
+  color: #f2f2f2;
+  background-color: transparent;
+}
+
+*:focus {
+  outline: none;
+}
+
+button {
+  border: none;
+  color: #999;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #333; 
+}
+
+button:hover {
+  color: #bcbcbc;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: minmax(250px, 70%) minmax(200px, auto);
+}
+
+#code-input, #code-output {
+  border-right: 1px solid rgba(200, 200, 200, 0.1);
+  height: calc(100vh - 20px);
+}
+
+#code-output {
+  overflow-y: scroll;
 }

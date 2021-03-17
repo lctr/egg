@@ -1,13 +1,22 @@
 const { app, BrowserWindow } = require('electron');
-const path = require('path');
 
 function createWindow () {
   const win = new BrowserWindow({
-    titleBarStyle: "hidden",
-    width: 800,
-    height: 600,
+    width: 500,
+    height: 350,
+    darkTheme: true,
+    backgroundColor: "#80111111",
+    // titleBarStyle: "hiddenInset",
+    visualEffectState: "followWindow",
+    vibrancy: "sheet",
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      textAreasAreResizable: false,
+      defaultFontFamily: {
+        standard: "Helvetica"
+      },
+      spellcheck: false,
+
     }
   });
   win.loadFile('src/index.html');

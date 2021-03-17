@@ -10,6 +10,7 @@ textarea.focus();
 textarea.addEventListener('input', function (e) {
   try {
     json.textContent = ast(this.value);
+    results.textContent = run(this.value);
   } catch (e) {
     json.textContent = e;
   }
