@@ -10,28 +10,27 @@ const ast = (input) => {
 textarea.focus();
 textarea.addEventListener('input', function (e) {
   let input = this.value;
-  let [ L, R ] = [ '(', ')' ].map(p => countOf(p, input));
-  if (input.trim().length > 0) {
-    if (L > 0 && L === R) { // cheaply preventing running before done typing
-      try {
-        json.textContent = ast(input);
-        results.textContent = Egg.run(input);
-      } catch (e) {
-        json.textContent = '';
-        results.textContent = e;
-      }
+  const trimmed = input.trim();
+  if (trimmed.length > 0 && trimmed[ trimmed.length - 1 ] === ";") {
+    input = input.substring(0, trimmed.length - 1);
+    try {
+      json.textContent = ast(input);
+      results.textContent = `
+        > ${ Egg.run(input) }
+      `;
+      logs.innerHTML = `
+        ${ Egg.logs.log.map(l => `· ${ l }`).join("<br>") }
+      `;
+    } catch (e) {
+      json.textContent = '';
+      results.textContent = e;
     }
   } else {
     json.textContent = '';
     results.textContent = '';
   }
+  Egg.logs.refresh();
 });
-
-function countOf (char, string) {
-  let num = 0, len = string.length | 0;
-  while (len--) { if (string[ len ] === char) num++; }
-  return num;
-}
 
 textarea.addEventListener('keydown', function (e) {
   if (e.code !== 'Tab' && e.code !== 'Enter') return false;
@@ -43,7 +42,7 @@ textarea.addEventListener('keydown', function (e) {
   console.log(e.code);
   console.log(this);
   if (e.code === 'Tab') {
-    $.value = append("\t");
+    $.value = append("  ");
     this.selectionStart = this.selectionEnd = a + 1;
   } else if (e.code === 'Enter') {
     $.value = append("\n  ");
