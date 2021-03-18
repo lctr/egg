@@ -1,1 +1,0 @@
-const { Menu } = remote;
