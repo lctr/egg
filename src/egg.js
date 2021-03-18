@@ -20,7 +20,7 @@ const Egg = (function () {
 
   // 1. PARSER
   function skipSpace (text) {
-    // '#' introduced a line comment
+    // '~' introduces a line comment
     if (/^\n/.test(text)) logs.line();
     let skippable = text.match(/^(\s|~.*)*/);
     return text.slice(skippable[ 0 ].length);
