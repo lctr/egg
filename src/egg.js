@@ -243,7 +243,6 @@ const Egg = (function () {
   globals[ "el" ] = (array, i) => array[ i ];
 
   // interpreter; wrapper to parse a program and run it in a new scope
-  // parse a program and run it in a new scope. 
   // to preserve global scope, nested scopes are represented using obj prototype chains
   function run () {
     let scope = Object.create(globals);
