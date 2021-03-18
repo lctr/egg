@@ -12,7 +12,7 @@
 
 html, body {
   color: #f2f2f2;
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: monospace;
 }
 
 /* body {
@@ -44,15 +44,53 @@ button:hover {
 }
 
 .container {
-  display: grid;
-  grid-template-columns: minmax(250px, 70%) minmax(200px, auto);
+  display: flex;
+  flex-direction: row;
 }
 
-#code-input, #code-output {
+#code-input {
+  overflow-y: scroll;
   border-right: 1px solid rgba(200, 200, 200, 0.1);
-  height: calc(100vh - 20px);
+}
+
+textarea {
+  width: 50vw;
+  height: 250px;
+  border: none;
+  color: #f2f2f2;
+  background-color: transparent;
+}
+
+.code-line {
+  width: 50vw;
+  border: none;
+  display: grid;
+  gap: 4px;
+  grid-auto-flow: row;
+  grid-template-columns: 20px 1fr;
+  background-color: transparent; 
+}
+
+.line-number {
+  color: #bcbcbc;
+  text-align: right;
 }
 
 #code-output {
+  padding: 2px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+#code-input, #code-output {
+  height: calc(100vh - 20px);
+}
+
+#tree {
+  margin: 0 auto;
+  padding-top: 2px;
   overflow-y: scroll;
+  width: 100%;
+  color: #bcbcbc;
 }
