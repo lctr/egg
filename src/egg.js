@@ -1,28 +1,32 @@
 const Egg = (function () {
-  let logs = {
-    log: [],
-    lines: 0,
-    line () {
-      this.lines++;
+  let stack = {
+    logs: [], line: 0, cache: {},
+    get read () {
+      return this.logs;
     },
-    add (item) {
-      this.log.push(item ? item : 'Error logging Thing.');
+    dLine () {
+      this.line++;
+    },
+    write (item) {
+      this.logs.push(item ? item : 'Error logging Thing.');
     },
     refresh () {
-      this.log = [];
-      this.lines = 0;
-      return { log: this.log, lines: this.lines };
+      this.cache.logs = this.logs;
+      this.cache.line = this.line;
+      this.logs = [];
+      this.line = 0;
+      console.log(`Egg stopped at line ${ this.cache.line }`);
     },
-    get logs () {
-      return this.log;
+    toString () {
+      return this.logs.map(l => `· ${ l }`).join("<br>");
     }
   };
 
   // 1. PARSER
   function skipSpace (text) {
     // '~' introduces a line comment
-    if (/^\n/.test(text)) logs.line();
     let skippable = text.match(/^(\s|~.*)*/);
+    if (/\n/.test(skippable[ 0 ])) stack.dLine();
     return text.slice(skippable[ 0 ].length);
   }
 
@@ -68,6 +72,7 @@ const Egg = (function () {
   }
 
   function parse (program) {
+    console.log('original code:', program);
     let { expr, rest } = parseExpression(program);
     if (skipSpace(rest).length > 0) {
       throw new SyntaxError("Unexpected text after program");
@@ -168,7 +173,7 @@ const Egg = (function () {
   // scope if the binding is not in the local scope
   base.set = (args, env) => {
     if (args.length != 2 || args[ 0 ].type != "word") {
-      console.log('Incorrect user of set. Scope:\n', env);
+      console.log('Incorrect use of set. Scope:\n', env);
       throw new SyntaxError("Incorrect use of set! Assignment only valid for variables.");
     }
     let varName = args[ 0 ].name;
@@ -186,7 +191,7 @@ const Egg = (function () {
     throw new ReferenceError(`Cannot set value of undefined variable ${ varName }!`);
   };
 
-  // FUNCTION-form, produces a function; :: (...args, body)
+  // LAMBDA-form, produces a function; :: (...args, body)
   // functions get their own local scope;
   // treats last argument as function body, and all args before as names of the function's parameters
   base[ "::" ] = (args, scope) => {
@@ -221,26 +226,22 @@ const Egg = (function () {
   globals[ "false" ] = false;
 
   // basic arithmetic and relations operators 
-  // currently using shorter (less explicit version)
-  // uses object prototype chain to represent nested scopes
+  // using object prototype chain to represent nested scopes
   [ "+", "-", "*", "/", "==", "<", ">" ].forEach(op => {
     globals[ op ] = Function("a, b", `return a ${ op } b`);
   });
-  // for (let op of [ "+", "-", "*", "/", "==", "<", ">" ]) {
-  //   globals[ op ] = Function("a, b", `return a ${ op } b;`);
-  // }
 
-  // console.log wrapper, called "print"
+  // console.log wrapper
   globals[ "log" ] = value => {
     console.log(value);
-    logs.add(value);
+    stack.write(value);
     return value;
   };
 
   // arrays
-  globals[ "arr" ] = (...values) => values;
-  globals[ "len" ] = array => array.length;
-  globals[ "el" ] = (array, i) => array[ i ];
+  globals[ "array" ] = (...values) => values;
+  globals[ "length" ] = array => array.length;
+  globals[ "element" ] = (array, i) => array[ i ];
 
   // interpreter; wrapper to parse a program and run it in a new scope
   // to preserve global scope, nested scopes are represented using obj prototype chains
@@ -251,6 +252,6 @@ const Egg = (function () {
   }
 
   return {
-    parse, evaluate, run, logs
+    parse, evaluate, run, stack
   };
 }());
