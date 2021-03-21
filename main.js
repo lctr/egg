@@ -6,11 +6,12 @@ function createWindow () {
     height: 350,
     darkTheme: true,
     backgroundColor: "#80111111",
-    // titleBarStyle: "hiddenInset",
+    titleBarStyle: "hiddenInset",
     visualEffectState: "followWindow",
-    vibrancy: "sheet",
+    vibrancy: "hud",
     webPreferences: {
       nodeIntegration: true,
+      enableRemoteModule: true,
       textAreasAreResizable: false,
       defaultFontFamily: {
         standard: "Helvetica"
@@ -19,7 +20,7 @@ function createWindow () {
 
     }
   });
-  win.loadFile('src/index.html');
+  win.loadURL(`file://${ __dirname }/src/index.html`);
 }
 
 app.whenReady().then(createWindow);
