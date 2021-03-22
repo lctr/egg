@@ -7,22 +7,20 @@
   <title>🥚</title>
   <link rel="stylesheet" href="./style.css">
   <script src="./egg.js" charset="utf-8"></script>
+  <link rel="stylesheet" href="../lib/codemirror.css">
+  <script src="../lib/codemirror.js"></script>
+  <script src="../lib/javascript.js"></script>
 </head>
 
 <body>
   <div class="titlebar"></div>
 
   <div class="container">
-    <div id="code-input">
-      <div class="gutter">
-        <pre class="line-number">1</pre>
-      </div>
-      <div>
-        <textarea id="code-editor" spellcheck="false"></textarea>
-      </div>
+    <div id="code-input" class="default-left">
+      <textarea id="code-editor"></textarea>
     </div>
-
-    <div id="code-output">
+    <div class="resizer" id="resize-x"></div>
+    <div id="code-output" class="default-right">
       <div id="results"></div>
       <div id="logs"></div>
       <div id="tree">
@@ -30,7 +28,6 @@
       </div>
     </div>
   </div>
-
   <script src="./script.js"></script>
 </body>
 
