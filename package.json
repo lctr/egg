@@ -6,7 +6,9 @@
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "build": "tsc -p .",
+    "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
   },
   "keywords": [],
   "author": "",
@@ -17,9 +19,13 @@
     "@electron-forge/maker-rpm": "^6.0.0-beta.54",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
     "@electron-forge/maker-zip": "^6.0.0-beta.54",
-    "electron": "^12.0.1"
+    "@types/node": "^10.12.10",
+    "electron": "^12.0.1",
+    "ts-node": "^8.8.1",
+    "typescript": "^3.8.3"
   },
   "dependencies": {
+    "codemirror": "^5.60.0",
     "electron-drag": "^2.0.0",
     "electron-squirrel-startup": "^1.0.0"
   },
