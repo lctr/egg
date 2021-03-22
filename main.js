@@ -20,7 +20,7 @@ function createWindow () {
 
     }
   });
-  win.loadURL(`file://${ __dirname }/src/index.html`);
+  win.loadURL(`file://${ app.getAppPath() }/src/index.html`);
 }
 
 app.whenReady().then(createWindow);
