@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const mouseMoveHandler = function (e) {
     // How far the mouse has been moved
     const dx = e.clientX - x;
-    const dy = e.clientY - y;
+    // const dy = e.clientY - y;
 
     const newLeftWidth = (leftWidth + dx) * 100 / resizer.parentNode.getBoundingClientRect().width;
     leftSide.style.width = `${ newLeftWidth }%`;
@@ -70,7 +70,6 @@ document.addEventListener('DOMContentLoaded', function () {
   // Attach the handler
   resizer.addEventListener('mousedown', mouseDownHandler);
 
-  const codeInput = document.getElementById("code-input");
   const results = document.getElementById("results");
   const stackLogs = document.getElementById("logs");
   const json = document.getElementById("json");
@@ -80,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
     return tree;
   };
 
-  const inputHandler = function (e) {
+  function inputHandler (e) {
     results.textContent = ' · · · ';
     let code = editor.getValue().trim();
     if (code.length > 0 && code[ code.length - 1 ] === ";") {
@@ -100,6 +99,6 @@ document.addEventListener('DOMContentLoaded', function () {
     Egg.stack.refresh();
   };
 
-  codeInput.addEventListener('change', inputHandler, true);
+  editor.on("change", inputHandler);
 
 });
