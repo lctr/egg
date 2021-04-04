@@ -2,11 +2,22 @@
   --title-bar-height: 35px;
   --container-height: calc(calc(100vh - var(--title-bar-height)) - 10px);
   --white1: #f2f2f2;
-
+  --token-comment: #676f7d;
+  --token-string: #e5c07b;
+  --token-number: #c678dd;
+  --token-embedded: #abb2bf;
+  --token-constant: #56b6c2;
+  --token-variable: #e06c75;
+  --token-types: #56b6c2;
+  --token-class: #61afef;
+  --token-etcvar: #abb2bf;
+  --token-function: #98c379;
+  --token-args: #d19a66;
+  --token-utils: #98c379;
 }
 
-
-html, body {
+html,
+body {
   color: #f2f2f2;
   font-family: 'Roboto mono', courier, monospace;
 }
@@ -29,15 +40,15 @@ body {
   overflow-y: hidden;
 }
 
-textarea {
+/* textarea {
   border: none;
   color: #f2f2f2;
   background-color: transparent;
-}
+} */
 
-*:focus {
+/* *:focus {
   outline: none;
-}
+} */
 
 .container {
   width: 99%;
@@ -45,6 +56,7 @@ textarea {
   margin: 0 auto;
   display: flex;
   align-items: stretch;
+  font-size: 14px;
 }
 
 .resizer {
@@ -56,7 +68,6 @@ textarea {
   margin-top: -8px;
 }
 
-
 div#code-input.default-left {
   flex: 3;
 }
@@ -65,22 +76,12 @@ div#code-output.default-right {
   flex: 1;
 }
 
-pre {
+#code-output pre {
   margin: 0 auto;
   align-self: stretch;
   border: none;
   color: #f2f2f2;
   background-color: transparent;
-}
-
-.code-line:focus, .focused {
-  background-color: rgba(150, 150, 150, 0.4);
-}
-
-.line-number {
-  color: #bcbcbc;
-  text-align: right;
-  width: 22px;
 }
 
 #code-editor {
@@ -103,7 +104,8 @@ pre {
   /* flex: 1; */
 }
 
-#code-input, #code-output {
+#code-input,
+#code-output {
   height: inherit;
 }
 
