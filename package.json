@@ -1,5 +1,5 @@
 {
-  "name": "weva",
+  "name": "egg",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
@@ -19,8 +19,10 @@
     "@electron-forge/maker-rpm": "^6.0.0-beta.54",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
     "@electron-forge/maker-zip": "^6.0.0-beta.54",
+    "@types/codemirror": "^0.0.108",
     "@types/node": "^10.12.10",
     "electron": "^12.0.1",
+    "prettier": "2.2.1",
     "ts-node": "^8.8.1",
     "typescript": "^3.8.3"
   },
@@ -36,7 +38,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "weva"
+            "name": "egg"
           }
         },
         {
