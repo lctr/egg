@@ -24,8 +24,6 @@
   const octalRE = /(?<!\w|\$)0[xX]\h+\b/;
   const operatorRE = /[+|-]/;
 
-
-
   // 1. PARSER
   function skipSpace (program) {
     // '~' introduces a line comment
@@ -33,9 +31,10 @@
     return program.slice(skippable[ 0 ].length);
   }
 
-  function parseExpression (program, state) {
+  function parseExpression (program) {
     program = skipSpace(program);
     let match, expr;
+    const punct = () => match = [ '' ];
     if (match = booleanRE.exec(program)) {
       expr = { type: BLN, value: match[ 0 ] };
     }
@@ -48,59 +47,65 @@
     else if (match = /^\d+\b/.exec(program)) {
       expr = { type: INT, value: Number(match[ 0 ]) };
     }
-    else if (match = /^[^\s\(\)\{\},~"]+/.exec(program)) {
+    else if (match = /^[^\s\(\)\{\}\[\],"]+/.exec(program)) {
       expr = { type: VAR, name: match[ 0 ] };
     }
+    else if (program[ 0 ] == '{') {
+      expr = { type: VAR, name: 'do' };
+      punct();
+    } else if (program[ 0 ] == '[') {
+      expr = { type: VAR, name: '[]' };
+      punct();
+    }
+    // else if (match = /^[\{\}]\b/.exec(program))
+    //   return parseDo({ type: VAR, name: "do" }, program.slice(1));
     else {
       throw new SyntaxError(`Expression parse error! Unexpected syntax: ${ program }`);
     }
     return parseApply(expr, program.slice(match[ 0 ].length));
   }
 
-  function parseBrackets (expr, program) {
-    program = skipSpace(program);
-    if (program[ 0 ] != '[') {
-      return { expr, rest: program };
+  function mapDelims (expr) {
+    switch (expr.name) {
+      case 'do':
+        return [ '{', ';', '}' ];
+      case '[]':
+        return [ '[', ',', ']' ];
+      default:
+        return [ '(', ',', ')' ]
     }
-    program = skipSpace(program.slice(1));
-    expr = { type: APL, operator: { type: VAR, name: '[]' }, args: [] };
-    while (program[ 0 ] !== ']') {
-      let arg = parseExpression(program);
-      expr.args.push(arg.expr);
-      program = skipSpace(arg.rest);
-      if (program[ 0 ] === ',') {
-        program = skipSpace(program.slice(1));
-      } else if (program[0] !== ']') {
-        throw new SyntaxError(
-          `Expected ',' or ']', but instead got ${program[0]}`
-        )
-      }
-    }
-    return parseBrackets(expr, program.slice(1))
   }
 
   function parseApply (expr, program) {
+    const [ left, mid, right ] = mapDelims(expr); 
     program = skipSpace(program);
     // if next char in program is not "(", then there is no application, returning expression given
-    if (program[ 0 ] !== '(') {
+    if (program[ 0 ] !== left) {
       return { expr, rest: program };
     }
     program = skipSpace(program.slice(1));
     expr = { type: APL, operator: expr, args: [] };
-    while (program[ 0 ] !== ')') {
+    while (program[ 0 ] !== right) {
       let arg = parseExpression(program);
       expr.args.push(arg.expr);
       program = skipSpace(arg.rest);
-      if (program[ 0 ] === ',') {
+      if (program[ 0 ] === mid) {
         program = skipSpace(program.slice(1));
-      } else if (program[ 0 ] !== ')') {
+      } else if (program[ 0 ] !== right) {
         throw new SyntaxError(
-          `Expected ',' or ')', but instead got ${ program[0] }`
+          `Expected '${mid}' or '${right}' but instead got ${ program.slice(0, 16) }...
+-----------------------------------------------|`
         );
       }
     }
+    // special syntax for lambdas to separate params from body? 
+
     // need to check again (after parsing) since application expression can itself be applied
     return parseApply(expr, program.slice(1));
+  }
+
+  function parseLambda (expr, program) {
+    
   }
 
   function parse (program) {
@@ -248,47 +253,37 @@
     };
   };
 
-  // 3. ENVIRONMENT
+  // 3. 
+  // 4. ENVIRONMENT
+  function Num (n) {
+    if (typeof n !== 'number')
+      throw new TypeError(
+        `Numeric type expected! Argument ${ n } could not be coerced into a number.`
+      );
+    return n;
+  }
+
   // global scope
+  // libraries added to this scope with corresponding namespaces
   const globals = Object.create(null);
   // accessing booleans
   globals[ 'true' ] = true;
   globals[ 'false' ] = false;
-  globals[ 'and' ] = (a, b) => a && b;
-  globals[ 'or' ] = (a, b) => a || b;
+  globals[ 'not' ] = a => !Boolean(a);
+  globals[ 'and' ] = (a, b) => Boolean(a) && Boolean(b);
+  globals[ 'or' ] = (a, b) => Boolean(a) || Boolean(b);
 
   // basic arithmetic and relations operators
   // TODO: rewrite
-  globals[ '+' ] = (a, b) => a + b;
-  globals[ '-' ] = (a, b) => a - b;
-  globals[ '*' ] = (a, b) => a * b;
-  globals[ '/' ] = (a, b) => a / b;
-  globals[ 'mod' ] = (a, b) => a % b;
-  globals[ 'gcd' ] = (a, b) => {
-    let t;
-    while (b !== 0) {
-      t = b;
-      b = a % b;
-      a = t;
-    }
-    return a;
-  };
-
-  globals[ 'lcm' ] = (a, b) => {
-    if (typeof a !== 'number' || typeof b !== 'number')
-      throw new TypeError(`Arguments to lcm(a, b) must be numbers!`);
-    if (a === 0 && b === 0) return 0;
-    const f = globals['gcd'](a, b);
-    if (a === 0) return Math.abs(b);
-    else if (b === 0) return Math.abs(a);
-    else {
-      return (Math.abs(a) / f) * Math.abs(b); 
-    }
-  };
+  globals[ '+' ] = (a, b) => Num(a) + Num(b);
+  globals[ '-' ] = (a, b) => Num(a) - Num(b);
+  globals[ '*' ] = (a, b) => Num(a) * Num(b);
+  globals[ '/' ] = (a, b) => Num(a) / Num(b);
+  globals[ 'mod' ] = (a, b) => Num(a) % Num(b);
 
   globals[ '<' ] = (a, b) => a < b;
   globals[ '>' ] = (a, b) => a > b;
-  globals[ '==' ] = (a, b) => Object.is(a, b);
+  globals[ '==' ] = (a, b) => a === b;
 
   // console.log wrapper
   globals[ 'show' ] = () => {
@@ -313,8 +308,9 @@
   function run () {
     let scope = Object.create(globals);
     let program = Array.prototype.slice.call(arguments, 0).join('\n');
-    let ast = parse(program, scope);
-    return evaluate(parse(program), scope);
+    let ast = parse(program);
+    console.log(ast);
+    return evaluate(ast, scope);
   }
 
   return {
